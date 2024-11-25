@@ -1,0 +1,155 @@
+body {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    background-color: #4B0082; /* Purple background */
+    color: white;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+h1 {
+    font-size: 3em;
+    margin: 20px 0;
+    color: #FFD700; /* Golden color for title */
+}
+
+#credits {
+    font-size: 1em;
+    color: #CCCCCC;
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+#leftSidebar {
+    position: fixed;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+}
+
+#leftSidebar button {
+    background-color: #333;
+    color: #FFF;
+    border: none;
+    padding: 15px;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+
+#leftSidebar button:hover {
+    background-color: #666;
+}
+
+#actionButtons {
+    margin-top: 30px;
+}
+
+#actionButtons button {
+    background-color: #333;
+    color: #FFF;
+    border: none;
+    padding: 12px 20px;
+    margin: 10px;
+    font-size: 1.1em;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+}
+
+#actionButtons button:hover {
+    transform: scale(1.05);
+}
+
+#coinCount {
+    position: fixed;
+    bottom: 50px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #FFD700;
+    font-size: 1.5em;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#randomNumberDisplay {
+    font-size: 2em;
+    margin: 20px 0;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#shopDisplay, #inventoryDisplay {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    padding: 30px;
+    border-radius: 15px;
+    width: 300px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+    color: white;
+}
+
+#shopDisplay h2, #inventoryDisplay h2 {
+    font-size: 2em;
+    color: #FFD700;
+    margin-bottom: 20px;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:focus {
+    outline: none;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.inventory-item {
+    background-color: #333;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    color: #FFD700;
+}
+
+#generateButton {
+    background-color: #FFD700;
+    color: #4B0082;
+    font-size: 2em;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 15px;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+#generateButton:hover {
+    background-color: #4B0082;
+    color: #FFD700;
+    transform: scale(1.1);
+}

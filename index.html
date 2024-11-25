@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sadood’s RNG</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      background-color: #4B0082; /* Purple background */
+      color: white;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+    h1 {
+      font-size: 3em;
+      margin: 20px 0;
+      color: #FFD700; /* Golden color for title */
+    }
+    #credits {
+      font-size: 1em;
+      color: #CCCCCC;
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+    }
+    #leftSidebar {
+      position: fixed;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+    }
+    #leftSidebar button {
+      background-color: #333;
+      color: #FFF;
+      border: none;
+      padding: 15px;
+      margin-bottom: 10px;
+      font-size: 1.2em;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+    }
+    #leftSidebar button:hover {
+      background-color: #666;
+    }
+    #actionButtons {
+      margin-top: 30px;
+    }
+    #actionButtons button {
+      background-color: #333;
+      color: #FFF;
+      border: none;
+      padding: 12px 20px;
+      margin: 10px;
+      font-size: 1.1em;
+      border-radius: 8px;
+      transition: transform 0.2s ease;
+    }
+    #actionButtons button:hover {
+      transform: scale(1.05);
+    }
+    #coinCount {
+      position: fixed;
+      bottom: 50px;
+      right: 20px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #FFD700;
+      font-size: 1.5em;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+    #randomNumberDisplay {
+      font-size: 2em;
+      margin: 20px 0;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #shopDisplay, #inventoryDisplay {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.8);
+      padding: 30px;
+      border-radius: 15px;
+      width: 300px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+      color: white;
+    }
+    #shopDisplay h2, #inventoryDisplay h2 {
+      font-size: 2em;
+      color: #FFD700;
+      margin-bottom: 20px;
+    }
+    button {
+      cursor: pointer;
+    }
+    button:focus {
+      outline: none;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    .inventory-item {
+      background-color: #333;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 1.1em;
+      color: #FFD700;
+    }
+    #generateButton {
+      background-color: #FFD700;
+      color: #4B0082;
+      font-size: 2em;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 15px;
+      margin-top: 20px;
+      cursor: pointer;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    #generateButton:hover {
+      background-color: #4B0082;
+      color: #FFD700;
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Sadood’s RNG</h1>
+
+  <div id="randomNumberDisplay"></div>
+  <div id="coinCount">Coins: 0</div>
+
+  <div id="leftSidebar">
+    <button id="inventoryButton">Inventory</button>
+    <button id="shopButton">Shop</button>
+  </div>
+
+  <div id="credits">
+    <p>By Saoud</p>
+  </div>
+
+  <div id="shopDisplay">
+    <h2>Shop</h2>
+    <p>Current Luck: <span id="luckDisplay">0%</span></p>
+    <p>Cost to buy +1% Luck: 500 coins</p>
+    <button id="buyLuckButton">Buy +1% Luck</button>
+    <button id="closeShopButton">Close Shop</button>
+  </div>
+
+  <div id="actionButtons" style="display: none;">
+    <button id="keepButton">Keep</button>
+    <button id="deleteButton">Delete</button>
+  </div>
+
+  <div id="deleteConfirmation" style="display: none;">
+    <p>Are you sure you want to delete this item?</p>
+    <button id="confirmDeleteButton">Yes</button>
+    <button id="cancelDeleteButton">No</button>
+  </div>
+
+  <div id="inventoryDisplay">
+    <h2>Inventory</h2>
+    <ul id="inventoryList"></ul>
+    <button id="closeInventoryButton">Close Inventory</button>
+  </div>
+
+  <button id="generateButton">Roll</button>
+
+  <script>
+    let coins = 0;
+    let inventory = [];
+    let luck = 0;
+
+    // Update the inventory UI whenever the inventory changes
+    function updateInventoryUI() {
+      const inventoryList = document.getElementById('inventoryList');
+      inventoryList.innerHTML = "";
+      inventory.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.className = 'inventory-item';
+        li.textContent = item;
+        li.onclick = () => showDeleteConfirmation(index); // Show delete confirmation on item click
+        inventoryList.appendChild(li);
+      });
+    }
+
+    // Function to generate random number and handle coin rewards
+    function generateRandomNumber() {
+      const luminosityChance = 1200000000 - luck * 12000000;
+      let randomNumber = Math.floor(Math.random() * 10000000) + 1;
+      let earnedCoins = 0;
+      let rarity = "";
+
+      if (randomNumber <= 4999999) {
+        earnedCoins = 2;
+        rarity = "Common";
+      } else if (randomNumber <= 6666666) {
+        earnedCoins = 3;
+        rarity = "Uncommon";
+      } else if (randomNumber <= 7500000) {
+        earnedCoins = 4;
+        rarity = "Rare";
+      } else if (randomNumber <= 8125000) {
+        earnedCoins = 16;
+        rarity = "Epic";
+      } else if (randomNumber <= 8750000) {
+        earnedCoins = 64;
+        rarity = "Legendary";
+      } else if (randomNumber <= 9000000) {
+        earnedCoins = 248;
+        rarity = "Mythic";
+      } else if (randomNumber <= 9050000) {
+        earnedCoins = 524;
+        rarity = "Master";
+      } else if (randomNumber <= 9060000) {
+        earnedCoins = 999;
+        rarity = "Chromatic";
+      } else if (randomNumber <= 9065000) {
+        earnedCoins = 7777;
+        rarity = "Heavenly";
+      } else if (randomNumber <= luminosityChance) {
+        earnedCoins = 10000000;
+        rarity = "Luminosity";
+      }
+
+      coins += earnedCoins;
+      document.getElementById('coinCount').textContent = `Coins: ${coins}`;
+      document.getElementById('randomNumberDisplay').textContent = `You got a ${rarity} item! Earned ${earnedCoins} coins.`;
+
+      inventory.push(rarity);
+      updateInventoryUI();
+
+      document.getElementById('actionButtons').style.display = 'block';
+    }
+
+    // Show delete confirmation
+    function showDeleteConfirmation(index) {
+      document.getElementById('deleteConfirmation').style.display = 'block';
+      document.getElementById('confirmDeleteButton').onclick = () => {
+        inventory.splice(index, 1); // Remove the item
+        updateInventoryUI(); // Update inventory display
+        document.getElementById('deleteConfirmation').style.display = 'none'; // Hide confirmation
+      };
+      document.getElementBy
